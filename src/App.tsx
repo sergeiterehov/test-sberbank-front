@@ -11,6 +11,9 @@ interface IStateApp {
     data: null|IGetDataResult;
 }
 
+/**
+ * Main application.
+ */
 export class App extends React.Component<IPropsApp, IStateApp> {
     constructor(props) {
         super(props);
