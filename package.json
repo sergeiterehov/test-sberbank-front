@@ -1,0 +1,26 @@
+{
+  "name": "test-sberbank-front",
+  "version": "1.0.0",
+  "description": "Тестовое задание от Сбербанка (Фронтенд)",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "webpack-cli --watch",
+    "demo": "node demo.js"
+  },
+  "author": "Sergei Terehov",
+  "license": "ISC",
+  "dependencies": {
+    "@types/react": "^16.4.14",
+    "@types/react-dom": "^16.0.7",
+    "react": "^16.5.1",
+    "react-dom": "^16.5.1",
+    "ts-loader": "^5.1.1",
+    "typescript": "^3.0.3",
+    "webpack": "^4.19.1",
+    "webpack-cli": "^3.1.0"
+  },
+  "devDependencies": {
+    "express": "^4.16.3"
+  }
+}
