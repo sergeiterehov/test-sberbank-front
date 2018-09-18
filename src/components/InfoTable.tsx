@@ -1,28 +1,18 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 import { IGetDataResult } from "../DataPrivider";
+import { SortableTable, ISortableTableCell } from "./SratableTable";
 
 export interface IPropsInfoTable {
     data: null|IGetDataResult;
 }
 
-interface IStateInfoTable {
-    /**
-     * Sorting direction. Null - for default sorting.
-     */
-    orderBy: null|number;
-}
-
 /**
  * Main table with data.
  */
-export class InfoTable extends React.Component<IPropsInfoTable, IStateInfoTable> {
+export class InfoTable extends React.Component<IPropsInfoTable> {
     constructor(props) {
         super(props);
-
-        this.state = {
-            orderBy: null,
-        };
     }
 
     public render() {
@@ -32,24 +22,15 @@ export class InfoTable extends React.Component<IPropsInfoTable, IStateInfoTable>
             return <div>Data is not ready.</div>;
         }
 
-        const axisHeads = data.axis.map(
-            (axis) => <th key={axis.id}>{axis.name}</th>,
+        const head = data.axis.map(
+            (axis) => axis.name,
         );
-        const rows = this.renderRows(data);
+        const body = this.getTable(data);
 
-        return <table>
-            <tr>
-                {axisHeads}
-                <th>Deviation from plan</th>
-            </tr>
-            {rows}
-        </table>;
+        return <SortableTable head={[...head, "Deviation from plan"]} body={body} />;
     }
 
-    /**
-     * Renders all rows of table.
-     */
-    private renderRows(data: IGetDataResult) {
+    private getTable(data: IGetDataResult): ISortableTableCell[][] {
         /**
          * Max absolute delta's value.
          */
@@ -60,9 +41,12 @@ export class InfoTable extends React.Component<IPropsInfoTable, IStateInfoTable>
 
         // TODO: Realize sort!
         const rows = [...data.data].sort((a, b) => 0).map(
-            (item, itemIndex) => {
+            (item) => {
                 const cells = item.vector.map(
-                    (dimension, dimensionIndex) => <td key={dimensionIndex}>{dimension}</td>,
+                    (dimension) => ({
+                        value: dimension,
+                        view: <span>{dimension}</span>,
+                    }),
                 );
 
                 const deltaAbsNormalized = 0 === maxAbsDelta ? 0 : Math.abs(item.delta) / maxAbsDelta;
@@ -70,14 +54,17 @@ export class InfoTable extends React.Component<IPropsInfoTable, IStateInfoTable>
                 const progressNegative = item.delta < 0 ? <span>NEG[{deltaAbsNormalized}]</span> : null;
                 const progressPositive = item.delta > 0 ? <span>POS[{deltaAbsNormalized}]</span> : null;
 
-                return <tr key={itemIndex}>
-                    {cells}
-                    <td key="delta">
-                        {progressNegative}
-                        <span>{item.delta} {item.deltaMeasurement.ru}</span>
-                        {progressPositive}
-                    </td>
-                </tr>;
+                return [
+                    ...cells,
+                    {
+                        value: item.delta,
+                        view: <span>
+                            {progressNegative}
+                            <span>{item.delta} {item.deltaMeasurement.ru}</span>
+                            {progressPositive}
+                        </span>,
+                    },
+                ];
             },
         );
 
