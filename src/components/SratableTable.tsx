@@ -18,6 +18,9 @@ interface IStateSortableTable {
     orderBy: null|number;
 }
 
+/**
+ * Table with sorting functions.
+ */
 export class SortableTable extends React.Component<IPropsSortableTable, IStateSortableTable> {
     constructor(props) {
         super(props);
@@ -33,11 +36,19 @@ export class SortableTable extends React.Component<IPropsSortableTable, IStateSo
 
         return <table>
             <tr>
-                {head.map((item) => <th>{item}</th>)}
+                {head.map((item) => <th onClick={() => this.applySort()}>{item}</th>)}
             </tr>
             {body.map((row) => <tr>
                 {row.map((cell) => <td>{cell.view}</td>)}
             </tr>)}
         </table>;
+    }
+
+    private applySort() {
+        const body = this.props.body;
+
+        body.sort(() => -1);
+
+        this.forceUpdate();
     }
 }
