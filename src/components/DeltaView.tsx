@@ -12,7 +12,7 @@ export interface IPropsDeltaView {
  *
  * @param props Properties.
  */
-export const DeltaView = (props: IPropsDeltaView) => {
+export const DeltaView: React.SFC<IPropsDeltaView> = (props: IPropsDeltaView) => {
     const deltaAbsNormalized = 0 === props.maxAbsDelta ? 0 : Math.abs(props.delta) / props.maxAbsDelta;
 
     const progressNegative = props.delta < 0
