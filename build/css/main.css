@@ -1,0 +1,82 @@
+body {
+    background-color: #1d262b;
+    color: #eee;
+
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 14px;
+}
+
+.progress {
+    display: inline-block;
+    width: 35%;
+    height: 12px;
+    background-color: rgba(200, 255, 255, 0.05);
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.progress i {
+    border-radius: 12px;
+}
+
+.progress.progress-placeholder {
+    opacity: 0;
+}
+
+.progress.progress-negative {
+    text-align: right !important;
+}
+
+.progress.progress-positive {
+    text-align: left !important;
+}
+
+.progress.progress-negative i {
+    background-color: #f44e5d;
+}
+
+.progress.progress-positive i {
+    background-color: #25b375;
+}
+
+.progress i {
+    display: inline-block;
+    height: 100%;
+}
+
+.delta-value {
+    display: inline-block;
+    width: 30%;
+    text-align: center;
+}
+
+.sb-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.sb-table tr td,
+.sb-table tr th {
+    padding: 10px;
+}
+
+.sb-table tr th {
+    color: #738ea1;
+    font-weight: normal;
+    text-align: left;
+    border-bottom: solid 1px rgba(200, 255, 255, 0.1);
+    cursor: pointer;
+}
+
+.sb-table tr th .direction {
+    display: inline-block;
+    margin-left: 15px;
+}
+
+.sb-table tr:nth-child(even) td {
+    background-color: rgba(200, 255, 255, 0.03);
+}
+
+.sb-table tr *:last-child {
+    text-align: center;
+}

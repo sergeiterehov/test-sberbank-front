@@ -9,6 +9,7 @@ export interface IPropsApp {
 
 interface IStateApp {
     data: null|IGetDataResult;
+    x: number;
 }
 
 /**
@@ -20,7 +21,10 @@ export class App extends React.Component<IPropsApp, IStateApp> {
 
         this.state = {
             data: null,
+            x: 1,
         };
+
+        setInterval(() => this.setState({x: this.state.x}), 1000);
     }
 
     public render() {

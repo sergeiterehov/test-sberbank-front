@@ -2,6 +2,8 @@ import * as React from "react";
 import * as ReactDOM from "react-dom";
 import { IGetDataResult } from "../DataPrivider";
 import { SortableTable, ISortableTableCell } from "./SratableTable";
+import { Cache } from "../helpers/Cache";
+import { DeltaView } from "./DeltaView";
 
 export interface IPropsInfoTable {
     data: null|IGetDataResult;
@@ -9,10 +11,24 @@ export interface IPropsInfoTable {
 
 /**
  * Main table with data.
+ * Uses internal cache method.
  */
 export class InfoTable extends React.Component<IPropsInfoTable> {
+    /**
+     * Cached table data.
+     */
+    private tableCache: Cache<{
+        head: string[];
+        body: ISortableTableCell[][];
+    }>;
+
     constructor(props) {
         super(props);
+
+        this.tableCache = Cache.it((data: IGetDataResult) => ({
+            head: this.getTableHead(data),
+            body: this.getTableBody(data),
+        }));
     }
 
     public render() {
@@ -22,15 +38,31 @@ export class InfoTable extends React.Component<IPropsInfoTable> {
             return <div>Data is not ready.</div>;
         }
 
-        const head = data.axis.map(
-            (axis) => axis.name,
-        );
-        const body = this.getTable(data);
+        const table = this.tableCache.get([data]);
 
-        return <SortableTable head={[...head, "Deviation from plan"]} body={body} />;
+        return <SortableTable head={table.head} body={table.body} />;
     }
 
-    private getTable(data: IGetDataResult): ISortableTableCell[][] {
+    /**
+     * Return head of table.
+     *
+     * @param data Data object.
+     */
+    private getTableHead(data: IGetDataResult): string[] {
+        return [
+            ...data.axis.map(
+                (axis) => axis.name,
+            ),
+            "Deviation from plan",
+        ];
+    }
+
+    /**
+     * Return body of table.
+     *
+     * @param data Data object.
+     */
+    private getTableBody(data: IGetDataResult): ISortableTableCell[][] {
         /**
          * Max absolute delta's value.
          */
@@ -39,8 +71,7 @@ export class InfoTable extends React.Component<IPropsInfoTable> {
             0,
         );
 
-        // TODO: Realize sort!
-        const rows = [...data.data].sort((a, b) => 0).map(
+        const rows = data.data.map(
             (item) => {
                 const cells = item.vector.map(
                     (dimension) => ({
@@ -49,20 +80,13 @@ export class InfoTable extends React.Component<IPropsInfoTable> {
                     }),
                 );
 
-                const deltaAbsNormalized = 0 === maxAbsDelta ? 0 : Math.abs(item.delta) / maxAbsDelta;
-
-                const progressNegative = item.delta < 0 ? <span>NEG[{deltaAbsNormalized}]</span> : null;
-                const progressPositive = item.delta > 0 ? <span>POS[{deltaAbsNormalized}]</span> : null;
-
                 return [
                     ...cells,
                     {
                         value: item.delta,
-                        view: <span>
-                            {progressNegative}
-                            <span>{item.delta} {item.deltaMeasurement.ru}</span>
-                            {progressPositive}
-                        </span>,
+                        view: <DeltaView delta={item.delta}
+                            measurement={item.deltaMeasurement.ru}
+                            maxAbsDelta={maxAbsDelta} />,
                     },
                 ];
             },
